@@ -16,14 +16,14 @@ last_modified=$( jq -r '.result.resources[] | select(.format == "ZIP") | .last_m
 
 # download ZIP data file unless already done
 zip=$dataDir/${dataUrl##*/}
-[[ -f "$zip" ]] || ( cd $dataDir; wget "$dataUrl" )
+[[ -f "$zip" ]] || ( cd $dataDir; wget $dataUrl )
 
 unzipped=$dataDir/unzipped
 # get dir path where the zip file's */Extras/ will be extracted (contains release month so releases don't clobber each other)
 # get path from zip, discard leading info up to time and following spaces, keep the rest apart from the trailing /
 # maybe a bit too brittle?
 gnafExtras="$unzipped/$( unzip -l "$zip" '*/Extras/' | sed -rn '/Extras/s~^.*[0-9][0-9]:[0-9][0-9] *(.*)/$~\1~p' )"
-# unzip unless $gnafExtras already exists 
+# unzip unless $gnafExtras already exists
 [[ -d "$gnafExtras" ]] || ( mkdir -p $unzipped; cd $unzipped; unzip $zip )
 # get dir path parent of Standard/
 gnafData="$unzipped/$( unzip -l "$zip" '*/Standard/' | sed -rn '/Standard/s~^.*[0-9][0-9]:[0-9][0-9] *(.*)/Standard/$~\1~p' )"
@@ -134,5 +134,3 @@ In the SQL input area enter: RUNSCRIPT FROM 'data/createGnafDb.sql'
 or paste in the content of this file (to get progress feedback lacking with RUNSCRIPT).
 After an hour (with SSD) you should have a GNAF database.
 EoF
-
-
